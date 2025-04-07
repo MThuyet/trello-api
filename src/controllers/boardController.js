@@ -7,7 +7,8 @@ const createNew = (req, res, next) => {
     // Có kết quả trả về phía client
     res.status(StatusCodes.CREATED).json({ message: 'POST from Controller: API create new board' })
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ errors: error.message })
+    // Khi gọi next, express sẽ đưa về nơi xử lý lỗi tập trung
+    next(error)
   }
 }
 

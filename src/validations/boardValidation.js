@@ -25,7 +25,8 @@ const createNew = async (req, res, next) => {
     // abortEarly: mặc định là true thì sẽ dừng tại lỗi đầu tiên, false thì dừng với tất cả lỗi
     await correctCondition.validateAsync(req.body, { abortEarly: false })
 
-    // next()
+    // Validate hợp lệ thì cho đi tiếp (gọi callback tiếp theo)
+    next()
 
     res.status(StatusCodes.CREATED).json({ message: 'POST from Validation: API create new board' })
   } catch (error) {

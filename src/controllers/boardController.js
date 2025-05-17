@@ -1,11 +1,13 @@
 import { StatusCodes } from 'http-status-codes'
+import { boardService } from '~/services/boardService'
 
-const createNew = (req, res, next) => {
+const createNew = async (req, res, next) => {
   try {
     // Điều hướng dữ liệu sang tầng Service
+    const createBoard = await boardService.createNew(req.body)
 
     // Có kết quả trả về phía client
-    res.status(StatusCodes.CREATED).json({ message: 'POST from Controller: API create new board' })
+    res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) {
     // Khi gọi next, express sẽ đưa về nơi xử lý lỗi tập trung
     next(error)

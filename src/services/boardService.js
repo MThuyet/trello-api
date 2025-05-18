@@ -4,7 +4,6 @@ import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
 
-/* eslint-disable no-useless-catch */
 const createNew = async (reqBody) => {
   try {
     // Xử lý logic dữ liệu tùy đặc thù dự án

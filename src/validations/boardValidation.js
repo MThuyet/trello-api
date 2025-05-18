@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import Joi from 'joi'
 import ApiError from '~/utils/ApiError'
+import { BOARD_TYPES } from '~/utils/constants'
 
 const createNew = async (req, res, next) => {
   /*
@@ -18,7 +19,10 @@ const createNew = async (req, res, next) => {
       'string.max': 'Title must be at most {#limit} characters long',
       'string.trim': 'Title must not contain leading or trailing spaces'
     }),
-    description: Joi.string().required().min(3).max(255).trim().strict()
+    description: Joi.string().required().min(3).max(255).trim().strict(),
+    type: Joi.string()
+      .valid(...Object.values(BOARD_TYPES))
+      .required()
   })
 
   try {

@@ -2,6 +2,7 @@ import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
+import { cloneDeep } from 'lodash'
 
 /* eslint-disable no-useless-catch */
 const createNew = async (reqBody) => {
@@ -31,7 +32,21 @@ const getDetails = async (boardId) => {
 
     if (!board) throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
 
-    return board
+    // biến đổi dữ liệu phù hợp với FE
+    const resBoard = cloneDeep(board)
+    // đưa card về đúng column của nó
+    resBoard.columns.forEach((column) => {
+      // id hiện đang có kiểu dữ liệu là objectId nên phải chuyển về string để so sánh
+      column.cards = resBoard.cards.filter((card) => card.columnId.toString() === column._id.toString())
+
+      // cách dùng .equals() này vì objectId trong MG có support .equals()
+      // column.cards = resBoard.cards.filter((card) => card.columnId.equals(column._id))
+    })
+
+    // xóa mảng cards khỏi Boards
+    delete resBoard.cards
+
+    return resBoard
   } catch (error) {
     throw error
   }

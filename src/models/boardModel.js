@@ -29,6 +29,7 @@ const validateBeforeCreate = async (data) => {
   return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
 }
 
+// tạo mới
 const createNew = async (data) => {
   try {
     const validData = await validateBeforeCreate(data)
@@ -39,6 +40,7 @@ const createNew = async (data) => {
   }
 }
 
+// tìm kiếm theo id
 const findOneById = async (id) => {
   try {
     const objectId = new ObjectId(String(id))
@@ -90,10 +92,32 @@ const getDetails = async (id) => {
   }
 }
 
+// push columnId vào cuối mảng columnOrderIds
+const pushColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        // tìm board theo id
+        { _id: new ObjectId(String(column.boardId)) },
+        // push columnId vào cuối mảng columnOrderIds
+        { $push: { columnOrderIds: new ObjectId(String(column._id)) } },
+        // trả về document sau khi cập nhật
+        { returnDocument: 'after' }
+      )
+
+    // hàm này không trả về trực tiếp document mà trả về một object có thuộc tính value chứa document
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
   findOneById,
-  getDetails
+  getDetails,
+  pushColumnOrderIds
 }

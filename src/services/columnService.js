@@ -21,6 +21,22 @@ const createNew = async (reqBody) => {
   }
 }
 
+const updateCardOrderIds = async (columnId, reqBody) => {
+  try {
+    const updateData = {
+      ...reqBody,
+      updatedAt: Date.now()
+    }
+
+    const updatedColumn = await columnModel.updateCardOrderIds(columnId, updateData)
+
+    return updatedColumn
+  } catch (error) {
+    throw error
+  }
+}
+
 export const columnService = {
-  createNew
+  createNew,
+  updateCardOrderIds
 }

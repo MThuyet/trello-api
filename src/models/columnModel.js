@@ -70,6 +70,11 @@ const updateCardOrderIds = async (columnId, updateData) => {
       }
     })
 
+    // đối với những trường liên quan tới objectId phải biến đổi
+    if (updateData.cardOrderIds) {
+      updateData.cardOrderIds = updateData.cardOrderIds.map((id) => new ObjectId(String(id)))
+    }
+
     const result = await GET_DB()
       .collection(COLUMN_COLLECTION_NAME)
       .findOneAndUpdate(

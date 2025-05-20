@@ -126,6 +126,11 @@ const updateColumnOrderIds = async (boardId, updateData) => {
       }
     })
 
+    // đối với những trường liên quan tới objectId phải biến đổi
+    if (updateData.columnOrderIds) {
+      updateData.columnOrderIds = updateData.columnOrderIds.map((id) => new ObjectId(String(id)))
+    }
+
     const result = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
       .findOneAndUpdate(

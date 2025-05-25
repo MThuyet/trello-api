@@ -1,7 +1,10 @@
 import { env } from '~/config/environment'
 
 // những domain được phép truy cập tới tài nguyên của server
-export const WHITELIST_DOMAINS = ['http://localhost:5173']
+export const WHITELIST_DOMAINS = [
+  // không cần localhost nữa vì config cors đã luôn cho phép môi trường dev
+  // 'http://localhost:5173'
+]
 
 // các kiểu kiểu của bảng
 export const BOARD_TYPES = {

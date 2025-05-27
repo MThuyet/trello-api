@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { pickUser } from '~/utils/formatters'
 import { WEBSITE_DOMAIN } from '~/utils/constants'
 import { BrevoProvider } from '~/providers/BrevoProvider'
+import { JwtProvider } from '~/providers/JwtProvider'
+import { env } from '~/config/environment'
 
 const createNew = async (reqBody) => {
   try {
@@ -35,6 +37,7 @@ const createNew = async (reqBody) => {
     const verificationLink = `
 			${WEBSITE_DOMAIN}/account/verification?email=${getNewUser.email}&token=${getNewUser.verifyToken}
 		`
+    console.log('verificationLink', verificationLink)
     const subject = 'Trello by MTHUYETDEV: Please verify your email before using our service!'
     const htmlContent = `
 			<!DOCTYPE html>
@@ -88,7 +91,7 @@ const createNew = async (reqBody) => {
 				</body>
 				</html>
 		`
-    await BrevoProvider.sendEmail(getNewUser.email, getNewUser.displayName, subject, htmlContent)
+    // await BrevoProvider.sendEmail(getNewUser.email, getNewUser.displayName, subject, htmlContent)
 
     // trả về dữ liệu cho controller
     return pickUser(getNewUser)
@@ -97,6 +100,55 @@ const createNew = async (reqBody) => {
   }
 }
 
+const verifyAccount = async (reqBody) => {
+  try {
+    const existUser = await userModel.findOneByEmail(reqBody.email)
+
+    // các bước kiểm tra cần thiết
+    if (!existUser) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found')
+    if (existUser.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Your account is already active')
+    if (existUser.verifyToken !== reqBody.token) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Invalid token')
+
+    // update isActive & verifyToken
+    const updateData = {
+      isActive: true,
+      verifyToken: null
+    }
+    const updatedUser = await userModel.update(existUser._id, updateData)
+
+    // return user after updated
+    return pickUser(updatedUser)
+  } catch (error) {
+    throw error
+  }
+}
+
+const login = async (reqBody) => {
+  try {
+    const existUser = await userModel.findOneByEmail(reqBody.email)
+
+    // các bước kiểm tra cần thiết
+    if (!existUser) throw new ApiError(StatusCodes.NOT_FOUND, 'Wrong email or password')
+    if (!bcryptjs.compareSync(reqBody.password, existUser.password))
+      throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Wrong email or password')
+    if (!existUser.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Your account is not active, please verify your email!')
+
+    // tạo token đăng nhập để trả về cho client
+    const userInfo = { _id: existUser._id, email: existUser.email }
+
+    // tạo ra 2 loại token: accessToken và refreshToken
+    const accessToken = await JwtProvider.genegrateToken(userInfo, env.ACCESS_TOKEN_SIGNATURE, env.ACCESS_TOKEN_LIFE)
+    const refreshToken = await JwtProvider.genegrateToken(userInfo, env.REFRESH_TOKEN_SIGNATURE, env.REFRESH_TOKEN_LIFE)
+
+    // trả về thông tin của user kèm 2 token vừa tạo
+    return { accessToken, refreshToken, ...pickUser(existUser) }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
-  createNew
+  createNew,
+  verifyAccount,
+  login
 }

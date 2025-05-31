@@ -5,6 +5,15 @@ import { cardRoute } from './cardRoute'
 import { userRoute } from './userRoute'
 const Router = express.Router()
 
+// Ping API (không cần xác thực, dùng để giữ cho Render luôn hoạt động)
+Router.get('/ping', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Server is running',
+    timestamp: new Date().toISOString()
+  })
+})
+
 // Board API
 Router.use('/boards', boardRoute)
 

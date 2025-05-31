@@ -4,7 +4,7 @@ import { env } from '~/config/environment'
 export const WHITELIST_DOMAINS = [
   'https://mthuyet-trello-web.vercel.app',
   'https://www.mthuyet.site',
-  ''
+  'https://mthuyet-trello-api.onrender.com'
   // không cần localhost nữa vì config cors đã luôn cho phép môi trường dev
   // 'http://localhost:5173'
 ]

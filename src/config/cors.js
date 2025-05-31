@@ -8,8 +8,9 @@ export const corsOptions = {
   origin: function (origin, callback) {
     // origin là domain của request
     // call back là một hàm được truyền vào để xử lý kết quả sau khi kiểm tra origin, tham số thứ nhất để hứng lỗi, nếu ko có lỗi sẽ là null, tham số thứ 2 là boolean cho biết có cho phép request truy cập hay ko
-    // nếu môi trường là dev thì cho qua luôn
-    if (env.BUILD_MODE === 'dev') {
+
+    // Nếu origin là undefined (truy cập trực tiếp) hoặc môi trường dev, cho phép
+    if (!origin || env.BUILD_MODE === 'dev') {
       return callback(null, true)
     }
 

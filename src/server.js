@@ -27,6 +27,15 @@ const START_SERVER = () => {
   // Sử dụng JSON trong request
   app.use(express.json())
 
+  // Ping endpoint ở mức root (không cần đi qua bất kỳ middleware phức tạp nào)
+  app.get('/ping', (req, res) => {
+    res.status(200).json({
+      status: 'success',
+      message: 'Server is running',
+      timestamp: new Date().toISOString()
+    })
+  })
+
   // Sử dụng API v1
   app.use('/v1', APIs_V1)
 

@@ -316,8 +316,29 @@ const login = async (reqBody) => {
   }
 }
 
+const refreshToken = async (clientRefreshToken) => {
+  try {
+    // giải mã refreshToken
+    const refreshTokenDecoded = await JwtProvider.verifyToken(clientRefreshToken, env.REFRESH_TOKEN_SIGNATURE)
+
+    // // kiểm tra xem refreshToken có hợp lệ hay không
+    // if (!refreshTokenDecoded) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Refresh token is not valid')
+
+    // lấy thông tin user từ refreshToken
+    const userInfo = { _id: refreshTokenDecoded._id, email: refreshTokenDecoded.email }
+
+    // tạo accessToken mới
+    const accessToken = await JwtProvider.genegrateToken(userInfo, env.ACCESS_TOKEN_SIGNATURE, 5)
+
+    return { accessToken }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   createNew,
   verifyAccount,
-  login
+  login,
+  refreshToken
 }

@@ -83,7 +83,8 @@ const update = async (req, res, next) => {
   try {
     // lấy userId từ accessToken đã được giải mã
     const userId = req.jwtDecoded._id
-    const updatedUser = await userService.update(userId, req.body)
+    const userAvatarFile = req.file
+    const updatedUser = await userService.update(userId, req.body, userAvatarFile)
 
     res.status(StatusCodes.OK).json(updatedUser)
   } catch (error) {

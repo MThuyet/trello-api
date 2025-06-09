@@ -8,6 +8,7 @@ import { WEBSITE_DOMAIN } from '~/utils/constants'
 import { JwtProvider } from '~/providers/JwtProvider'
 import { env } from '~/config/environment'
 import { sendMail } from '~/providers/NodemailerProvider'
+import { CloundinaryProvider } from '~/providers/CloundinaryProvider'
 
 const createNew = async (reqBody) => {
   try {
@@ -333,7 +334,7 @@ const refreshToken = async (clientRefreshToken) => {
   }
 }
 
-const update = async (userId, reqBody) => {
+const update = async (userId, reqBody, userAvatarFile) => {
   try {
     // check
     const existUser = await userModel.findOneById(userId)
@@ -354,8 +355,14 @@ const update = async (userId, reqBody) => {
 
       // update password
       updatedUser = await userModel.update(existUser._id, { password: bcryptjs.hashSync(reqBody.new_password, 8) })
+    } else if (userAvatarFile) {
+      // trường hợp upload file lên cloudinary
+      const uploadResult = await CloundinaryProvider.streamUpload(userAvatarFile.buffer, 'users')
+
+      // lưu lại secure_url của avatar vừa upload vào db
+      updatedUser = await userModel.update(existUser._id, { avatar: uploadResult.secure_url })
     } else {
-      // trường hợp update thông tin chung
+      // trường hợp update thông tin chung (displayName)
       updatedUser = await userModel.update(existUser._id, reqBody)
     }
 

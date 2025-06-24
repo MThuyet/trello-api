@@ -1,6 +1,20 @@
 import { StatusCodes } from 'http-status-codes'
 import { boardService } from '~/services/boardService'
 
+const getBoards = async (req, res, next) => {
+  try {
+    const userId = req.jwtDecoded._id
+    // lấy page và itemPerPage từ query url phía client
+    const { page, itemPerPage } = req.query
+
+    const result = await boardService.getBoards(userId, page, itemPerPage)
+
+    return res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const createNew = async (req, res, next) => {
   try {
     // Điều hướng dữ liệu sang tầng Service
@@ -45,6 +59,7 @@ const moveCardToDifferentColumn = async (req, res, next) => {
 }
 
 export const boardController = {
+  getBoards,
   createNew,
   getDetails,
   updateColumnOrderIds,

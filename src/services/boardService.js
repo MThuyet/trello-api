@@ -20,7 +20,7 @@ const getBoards = async (userId, page, itemPerPage) => {
   }
 }
 
-const createNew = async (reqBody) => {
+const createNew = async (userId, reqBody) => {
   try {
     // Xử lý logic dữ liệu tùy đặc thù dự án
     const newBoard = {
@@ -29,7 +29,7 @@ const createNew = async (reqBody) => {
     }
 
     // Gọi tới model để xử lý vào DB
-    const createdBoard = await boardModel.createNew(newBoard)
+    const createdBoard = await boardModel.createNew(userId, newBoard)
 
     // Xử lý thêm các logic khác nếu đặc thù dự án cần
     const getNewBoard = await boardModel.findOneById(createdBoard.insertedId)

@@ -17,8 +17,9 @@ const getBoards = async (req, res, next) => {
 
 const createNew = async (req, res, next) => {
   try {
+    const userId = req.jwtDecoded._id
     // Điều hướng dữ liệu sang tầng Service
-    const createBoard = await boardService.createNew(req.body)
+    const createBoard = await boardService.createNew(userId, req.body)
 
     // Có kết quả trả về phía client
     res.status(StatusCodes.CREATED).json(createBoard)

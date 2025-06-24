@@ -96,11 +96,16 @@ const getBoards = async (userId, page, itemPerPage) => {
 }
 
 // tạo mới
-const createNew = async (data) => {
+const createNew = async (userId, data) => {
   try {
     const validData = await validateBeforeCreate(data)
 
-    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
+    const newBoardToAdd = {
+      ...validData,
+      ownerIds: [new ObjectId(String(userId))]
+    }
+
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(newBoardToAdd)
   } catch (error) {
     throw new Error(error)
   }
@@ -131,6 +136,7 @@ const getDetails = async (userId, boardId) => {
         ]
       }
     ]
+
     const result = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
       .aggregate([

@@ -117,19 +117,24 @@ const findOneById = async (id) => {
 }
 
 // query tổng hợp để lấy toàn bộ Columns và Cards thuộc về Board
-const getDetails = async (id) => {
+const getDetails = async (userId, boardId) => {
   try {
-    const objectId = new ObjectId(String(id))
+    const queryConditions = [
+      { _id: new ObjectId(String(boardId)) },
+      { _destroy: false },
+      {
+        $or: [
+          {
+            ownerIds: { $all: [new ObjectId(String(userId))] }
+          },
+          { memberIds: { $all: [new ObjectId(String(userId))] } }
+        ]
+      }
+    ]
     const result = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
       .aggregate([
-        // tìm Board theo id tương tự như findOne
-        {
-          $match: {
-            _id: objectId,
-            _destroy: false // chỉ lấy các bản ghi không bị xóa
-          }
-        },
+        { $match: { $and: queryConditions } },
         // tìm đến Collection Columns ( tương tự JOIN trong SQL )
         {
           $lookup: {
@@ -152,7 +157,7 @@ const getDetails = async (id) => {
       .toArray() // chuyển kết quả thành mảng vì arregate luôn trả về một cursor đến một tập kết quả, chứ không trả về một document trực tiếp, dù cursor đó có chứa một phần tử hay nhiều phần tử
 
     // dữ liệu luôn là mảng có một phần tử vì id là duy nhất
-    return result[0] || {} // trả về phần tử đầu tiên hoặc mặc định là {}
+    return result[0] || null // trả về phần tử đầu tiên hoặc mặc định là null
   } catch (error) {
     throw new Error(error)
   }

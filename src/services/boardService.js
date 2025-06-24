@@ -85,9 +85,9 @@ const updateColumnOrderIds = async (boardId, reqBody) => {
 const moveCardToDifferentColumn = async (reqBody) => {
   try {
     // B1: Cập nhật lại mảng cardOrderIds trong column gốc (xóa _id của card ra khỏi mảng cardOrderIds)
-    await columnModel.updateCardOrderIds(reqBody.originalColumnId, { cardOrderIds: reqBody.originalCardOrderIds })
+    await columnModel.updateColumn(reqBody.originalColumnId, { cardOrderIds: reqBody.originalCardOrderIds })
     // B2: Cập nhật lại mảng cardOrderIds trong column đích (thêm _id của card vào mảng cardOrderIds)
-    await columnModel.updateCardOrderIds(reqBody.newColumnId, { cardOrderIds: reqBody.newCardOrderIds })
+    await columnModel.updateColumn(reqBody.newColumnId, { cardOrderIds: reqBody.newCardOrderIds })
     // B3: Cập nhật lại columnId của card thay đổi
     await cardModel.updateColumnId(reqBody.currentCardId, { columnId: reqBody.newColumnId, updatedAt: Date.now() })
   } catch (error) {

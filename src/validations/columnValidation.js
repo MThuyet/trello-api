@@ -17,9 +17,10 @@ const createNew = async (req, res, next) => {
   }
 }
 
-const updateCardOrderIds = async (req, res, next) => {
+const updateColumn = async (req, res, next) => {
   const correctCondition = Joi.object({
-    cardOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).required()
+    title: Joi.string().min(3).max(50).trim().strict(),
+    cardOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
   })
 
   try {
@@ -49,6 +50,6 @@ const deleteColumn = async (req, res, next) => {
 
 export const columnValidation = {
   createNew,
-  updateCardOrderIds,
+  updateColumn,
   deleteColumn
 }

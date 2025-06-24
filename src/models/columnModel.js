@@ -60,7 +60,7 @@ const pushCardOrderIds = async (card) => {
   }
 }
 
-const updateCardOrderIds = async (columnId, updateData) => {
+const updateColumn = async (columnId, updateData) => {
   try {
     // Object.keys() trả về mảng các keys theo thứ tự
     Object.keys(updateData).forEach((fieldName) => {
@@ -109,6 +109,6 @@ export const columnModel = {
   createNew,
   findOneById,
   pushCardOrderIds,
-  updateCardOrderIds,
+  updateColumn,
   deleteOneById
 }

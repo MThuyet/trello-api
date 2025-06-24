@@ -8,7 +8,7 @@ const Router = express.Router()
 Router.route('/').post(authMiddleware.isAuthorized, columnValidation.createNew, columnController.createNew)
 
 Router.route('/:id')
-  .put(authMiddleware.isAuthorized, columnValidation.updateCardOrderIds, columnController.updateCardOrderIds)
+  .put(authMiddleware.isAuthorized, columnValidation.updateColumn, columnController.updateColumn)
   .delete(authMiddleware.isAuthorized, columnValidation.deleteColumn, columnController.deleteColumn)
 
 export const columnRoute = Router
